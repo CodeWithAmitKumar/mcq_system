@@ -12,6 +12,16 @@ $message = '';
 $error = '';
 $share_link = '';
 
+// Get all quizzes for display
+$quizzes = getQuizzes();
+
+// Debug: Print the first quiz to see its structure
+if (!empty($quizzes)) {
+    echo "<pre style='display:none;'>";
+    print_r($quizzes[0]); 
+    echo "</pre>";
+}
+
 // Get quiz data for editing
 $edit_quiz = null;
 if (isset($_GET['action']) && $_GET['action'] === 'edit' && isset($_GET['quiz_id'])) {
@@ -37,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = "Quiz title is required.";
         } else {
             $conn = getDbConnection();
-            $stmt = $conn->prepare("INSERT INTO quizzes (title, description, time_limit, creator_id) VALUES (?, ?, ?, ?)");
+            $stmt = $conn->prepare("INSERT INTO quizzes (title, description, time_limit, created_by) VALUES (?, ?, ?, ?)");
             $stmt->bind_param("ssii", $title, $description, $time_limit, $creator_id);
             
             if ($stmt->execute()) {
@@ -896,6 +906,8 @@ $quizzes = getQuizzes();
                                                 <?php 
                                                     if (isset($quiz['creator_name'])) {
                                                         echo htmlspecialchars($quiz['creator_name']);
+                                                    } else if (isset($quiz['username'])) {
+                                                        echo htmlspecialchars($quiz['username']);
                                                     } else {
                                                         echo 'Unknown';
                                                     }

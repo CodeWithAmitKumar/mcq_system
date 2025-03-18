@@ -9,12 +9,12 @@
 .dashboard-content {
     flex: 1;
     padding: 30px;
-    margin-left: 260px;
+    margin-left: 280px;
     background: #f8fafc;
     min-height: 100vh;
     position: relative;
     z-index: 1;
-    width: calc(100% - 260px);
+    width: calc(100% - 280px);
 }
 
 /* Attempt Details Styling */
@@ -50,6 +50,16 @@ main {
     .dashboard-content {
         margin-left: 0;
         width: 100%;
+        padding: 20px;
+    }
+    
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
     }
 }
 

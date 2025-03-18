@@ -43,8 +43,9 @@ try {
     if ($result->num_rows > 0) {
         $attempt = $result->fetch_assoc();
         $quiz_id = $attempt['quiz_id'];
+        $user_id = $attempt['user_id'];
         
-        // Get questions for this quiz
+        // Get questions for this quiz with correct indexing
         $stmt = $conn->prepare("SELECT * FROM questions WHERE quiz_id = ? ORDER BY id ASC");
         $stmt->bind_param("i", $quiz_id);
         $stmt->execute();
@@ -56,18 +57,34 @@ try {
         
         // Only try to get user answers if the table exists
         if ($tableExists) {
-            // Get user answers for this attempt
+            // Get quiz attempt ID for this result
+            $quiz_attempt_id = null;
             $stmt = $conn->prepare("
-                SELECT * FROM user_answers 
-                WHERE attempt_id = ?
-                ORDER BY question_id ASC
+                SELECT id FROM quiz_attempts 
+                WHERE user_id = ? AND quiz_id = ? 
+                ORDER BY attempt_date DESC LIMIT 1
             ");
-            $stmt->bind_param("i", $attempt_id);
+            $stmt->bind_param("ii", $user_id, $quiz_id);
             $stmt->execute();
             $result = $stmt->get_result();
             
-            while ($row = $result->fetch_assoc()) {
-                $answers[$row['question_id']] = $row;
+            if ($result->num_rows > 0) {
+                $quiz_attempt = $result->fetch_assoc();
+                $quiz_attempt_id = $quiz_attempt['id'];
+                
+                // Get user answers for this attempt with proper attempt_id
+                $stmt = $conn->prepare("
+                    SELECT * FROM user_answers 
+                    WHERE attempt_id = ?
+                    ORDER BY question_id ASC
+                ");
+                $stmt->bind_param("i", $quiz_attempt_id);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                
+                while ($row = $result->fetch_assoc()) {
+                    $answers[$row['question_id']] = $row;
+                }
             }
         }
     } else {
@@ -104,14 +121,18 @@ function formatTime($seconds) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Attempt Details - <?php echo SITE_NAME; ?></title>
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/admin-dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Additional styles specific to view_attempt_details.php */
         .attempt-header {
             background-color: white;
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative; /* Ensure proper stacking context */
+            z-index: 2; /* Higher than sidebar */
         }
         
         .attempt-meta {
@@ -137,6 +158,8 @@ function formatTime($seconds) {
             padding: 20px;
             margin-bottom: 15px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative; /* Ensure proper stacking context */
+            z-index: 2; /* Higher than sidebar */
         }
         
         .question-number {
@@ -237,6 +260,7 @@ function formatTime($seconds) {
             max-width: 300px;
         }
         
+        /* Responsive fixes */
         @media screen and (max-width: 768px) {
             .attempt-meta {
                 flex-direction: column;
@@ -253,6 +277,18 @@ function formatTime($seconds) {
                 width: 100%;
                 max-width: none;
             }
+            
+            /* Fix for mobile view */
+            .dashboard-content {
+                padding: 15px;
+            }
+        }
+        
+        /* Fix for sidebar overlap */
+        main {
+            position: relative;
+            z-index: 2;
+            width: 100%;
         }
     </style>
 </head>
@@ -263,12 +299,6 @@ function formatTime($seconds) {
         <div class="dashboard-content">
             <header>
                 <h1>Attempt Details</h1>
-                <div class="user-info">
-                    <span>Welcome, <?php echo $_SESSION['username']; ?></span>
-                    <a href="../logout.php" class="logout-btn">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </a>
-                </div>
             </header>
             
             <main>

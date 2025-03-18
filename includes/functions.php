@@ -455,5 +455,4 @@ function validateCSRFToken($token) {
     return hash_equals($_SESSION['csrf_token'], $token);
 }
 
-$created_by = $_SESSION['user_id']; // Get the admin's user ID
 ?> 

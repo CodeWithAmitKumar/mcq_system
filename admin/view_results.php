@@ -111,7 +111,86 @@ function formatTime($seconds) {
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/admin-dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Remove the inline styles since they're now in admin-dashboard.css -->
+    <style>
+        /* Fix text color visibility issues */
+        .stat-card, .content-card {
+            color: #333;
+        }
+        
+        .stat-value {
+            color: #333;
+        }
+        
+        .stat-label {
+            color: #444;
+        }
+        
+        .attempt-details .attempt-user {
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .attempt-meta div {
+            color: #555;
+        }
+        
+        table th {
+            color: white; /* Make sure header text is visible on the blue background */
+        }
+        
+        table td {
+            color: #333;
+        }
+        
+        .attempt-card {
+            background: white;
+            color: #333;
+        }
+        
+        .attempt-score {
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .btn-view-results {
+            color: white;
+            background-color: #4f46e5;
+            border-radius: 4px;
+            padding: 4px 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 5px;
+            font-size: 0.8em;
+        }
+        
+        .btn-view-results:hover {
+            background-color: #3b34c5;
+        }
+        
+        .progress-bar span {
+            color: #333;
+            font-weight: bold;
+            text-shadow: 0 0 2px rgba(255, 255, 255, 0.7);
+        }
+        
+        .card-header h2 {
+            color: white;
+        }
+        
+        .export-buttons .btn-export {
+            color: white;
+            background-color: #4f46e5;
+            border-radius: 4px;
+            padding: 8px 16px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .export-buttons .btn-export:hover {
+            background-color: #3b34c5;
+        }
+    </style>
 </head>
 <body>
     <div class="dashboard-container">

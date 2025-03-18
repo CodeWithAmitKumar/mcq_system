@@ -1,0 +1,6 @@
+  
+Fatal error: Uncaught Error: Class "mysqli" not found in C:\xampp\htdocs\Mcq_system\includes\db.php:5
+Stack trace:
+#0 C:\xampp\htdocs\Mcq_system\check_db.php(5): getDbConnection()
+#1 {main}
+  thrown in C:\xampp\htdocs\Mcq_system\includes\db.php on line 5

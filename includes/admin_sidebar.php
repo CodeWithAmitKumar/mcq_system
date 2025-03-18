@@ -2,6 +2,12 @@
 // Get current page name
 $current_page = basename($_SERVER['PHP_SELF']);
 ?>
+
+<!-- Sidebar Toggle Button for Mobile -->
+<button id="sidebarToggle" class="sidebar-toggle">
+    <i class="fas fa-bars"></i>
+</button>
+
 <div class="sidebar">
     <div class="sidebar-header">
         <div class="logo">
@@ -32,10 +38,6 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <a href="view_results.php" class="menu-item <?php echo $current_page === 'view_results.php' ? 'active' : ''; ?>">
                 <i class="fas fa-chart-bar"></i>
                 <span>View Results</span>
-            </a>
-            <a href="manage_users.php" class="menu-item <?php echo $current_page === 'manage_users.php' ? 'active' : ''; ?>">
-                <i class="fas fa-users"></i>
-                <span>Manage Users</span>
             </a>
         </div>
 
@@ -77,6 +79,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     overflow-y: auto;
     transition: all 0.3s ease;
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    z-index: 20; /* Ensure sidebar is above other content but below modals */
 }
 
 .sidebar-header {
@@ -221,4 +224,62 @@ $current_page = basename($_SERVER['PHP_SELF']);
     font-size: 14px;
     font-weight: 500;
 }
-</style> 
+
+/* Sidebar toggle button */
+.sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background: #3498db;
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 30;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.show {
+        transform: translateX(0);
+    }
+    
+    .sidebar-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+</style>
+
+<script>
+// Add sidebar toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebar = document.querySelector('.sidebar');
+    
+    if (sidebarToggle && sidebar) {
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('show');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                event.target !== sidebarToggle) {
+                sidebar.classList.remove('show');
+            }
+        });
+    }
+});
+</script> 
