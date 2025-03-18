@@ -26,17 +26,19 @@ if (isset($_GET['action']) && $_GET['action'] === 'edit' && isset($_GET['quiz_id
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Add new quiz
+    // In the add quiz section, modify the INSERT query
     if (isset($_POST['add_quiz'])) {
         $title = trim($_POST['title'] ?? '');
         $description = trim($_POST['description'] ?? '');
         $time_limit = (int)($_POST['time_limit'] ?? 0);
+        $creator_id = $_SESSION['user_id']; // Get current admin's ID
         
         if (empty($title)) {
             $error = "Quiz title is required.";
         } else {
             $conn = getDbConnection();
-            $stmt = $conn->prepare("INSERT INTO quizzes (title, description, time_limit) VALUES (?, ?, ?)");
-            $stmt->bind_param("ssi", $title, $description, $time_limit);
+            $stmt = $conn->prepare("INSERT INTO quizzes (title, description, time_limit, creator_id) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("ssii", $title, $description, $time_limit, $creator_id);
             
             if ($stmt->execute()) {
                 $quiz_id = $conn->insert_id;
