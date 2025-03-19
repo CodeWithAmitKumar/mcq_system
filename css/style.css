@@ -1,22 +1,22 @@
-/* Modern CSS for MCQ Management System */
+/* Pure Dark Theme CSS for MCQ Management System */
 :root {
-  /* Light Theme (Default) */
-  --primary-color: #4a6cf7;
-  --primary-dark: #3a56d4;
-  --secondary-color: #6c757d;
-  --success-color: #28a745;
-  --danger-color: #dc3545;
-  --warning-color: #ffc107;
-  --light-color: #f8f9fa;
-  --dark-color: #343a40;
-  --body-bg: #f5f8ff;
-  --card-bg: #ffffff;
-  --text-color: #333333;
-  --text-muted: #6c757d;
-  --border-color: #e9ecef;
-  --shadow-color: rgba(0, 0, 0, 0.1);
+  /* Pure Dark Theme Colors */
+  --primary-color: #3b82f6;
+  --primary-dark: #2563eb;
+  --secondary-color: #64748b;
+  --success-color: #10b981;
+  --danger-color: #ef4444;
+  --warning-color: #f59e0b;
+  --light-color: #f8fafc;
+  --dark-color: #000000;
+  --body-bg: #000000;
+  --card-bg: #111111;
+  --text-color: #ffffff;
+  --text-muted: #94a3b8;
+  --border-color: #1f2937;
+  --shadow-color: rgba(0, 0, 0, 0.5);
   --border-radius: 8px;
-  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
   --transition: all 0.3s ease;
 }
 
@@ -27,11 +27,12 @@
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   line-height: 1.6;
   color: var(--text-color);
   background-color: var(--body-bg);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: var(--transition);
+  min-height: 100vh;
 }
 
 .container {
@@ -39,7 +40,6 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 20px;
-  background-color: var(--body-bg);
 }
 
 /* Header Styles */
@@ -48,13 +48,15 @@ header {
   padding: 20px 0;
   box-shadow: var(--box-shadow);
   margin-bottom: 30px;
-  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  border-bottom: 1px solid var(--border-color);
 }
 
 header h1 {
   color: var(--primary-color);
   text-align: center;
   margin-bottom: 15px;
+  font-size: 2.5rem;
+  font-weight: 800;
 }
 
 nav ul {
@@ -66,21 +68,21 @@ nav ul {
 
 nav a {
   text-decoration: none;
-  color: var(--secondary-color);
+  color: var(--text-color);
   font-weight: 500;
-  padding: 8px 15px;
+  padding: 10px 20px;
   border-radius: var(--border-radius);
   transition: var(--transition);
 }
 
 nav a:hover {
   color: var(--primary-color);
-  background-color: rgba(74, 108, 247, 0.1);
+  background-color: rgba(59, 130, 246, 0.1);
 }
 
 nav a.active {
   color: var(--primary-color);
-  background-color: rgba(74, 108, 247, 0.1);
+  background-color: rgba(59, 130, 246, 0.1);
   font-weight: 600;
 }
 
@@ -102,13 +104,14 @@ main {
 h2 {
   color: var(--primary-color);
   margin-bottom: 20px;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 2rem;
 }
 
 h3 {
-  color: var(--secondary-color);
+  color: var(--text-color);
   margin: 25px 0 15px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* Form Styles */
@@ -120,7 +123,7 @@ label {
   display: block;
   margin-bottom: 8px;
   font-weight: 500;
-  color: var(--dark-color);
+  color: var(--text-color);
 }
 
 input[type="text"],
@@ -131,11 +134,11 @@ textarea,
 select {
   width: 100%;
   padding: 12px 15px;
+  background-color: var(--dark-color);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   font-size: 16px;
   transition: var(--transition);
-  background-color: var(--card-bg);
   color: var(--text-color);
 }
 
@@ -144,7 +147,7 @@ textarea:focus,
 select:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
 }
 
 /* Button Styles */
@@ -157,7 +160,7 @@ select:focus {
   border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   text-decoration: none;
   transition: var(--transition);
   text-align: center;
@@ -166,6 +169,7 @@ select:focus {
 .btn:hover {
   background-color: var(--primary-dark);
   transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .btn-secondary {
@@ -173,7 +177,8 @@ select:focus {
 }
 
 .btn-secondary:hover {
-  background-color: #5a6268;
+  background-color: #475569;
+  box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
 }
 
 .btn-small {
@@ -186,7 +191,8 @@ select:focus {
 }
 
 .btn-delete:hover {
-  background-color: #c82333;
+  background-color: #dc2626;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
 .action-buttons {
@@ -198,11 +204,12 @@ select:focus {
 /* Table Styles */
 table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   margin: 20px 0;
   background-color: var(--card-bg);
-  color: var(--text-color);
-  border-color: var(--border-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
 }
 
 th, td {
@@ -212,17 +219,20 @@ th, td {
 }
 
 th {
-  background-color: rgba(74, 108, 247, 0.1);
+  background-color: rgba(59, 130, 246, 0.1);
   color: var(--primary-color);
   font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
 }
 
 tr:hover {
-  background-color: rgba(0, 0, 0, 0.02);
+  background-color: rgba(59, 130, 246, 0.05);
 }
 
-tr:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.03);
+tr:last-child td {
+  border-bottom: none;
 }
 
 /* Message Styles */
@@ -230,17 +240,18 @@ tr:nth-child(even) {
   padding: 15px;
   margin-bottom: 20px;
   border-radius: var(--border-radius);
+  border: 1px solid transparent;
 }
 
 .success-message {
-  background-color: rgba(40, 167, 69, 0.1);
-  border: 1px solid rgba(40, 167, 69, 0.2);
+  background-color: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.2);
   color: var(--success-color);
 }
 
 .error-message {
-  background-color: rgba(220, 53, 69, 0.1);
-  border: 1px solid rgba(220, 53, 69, 0.2);
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.2);
   color: var(--danger-color);
 }
 
@@ -252,64 +263,80 @@ tr:nth-child(even) {
   margin-bottom: 30px;
 }
 
-.stat-box {
-  background-color: rgba(74, 108, 247, 0.1);
-  padding: 20px;
+.stat-card {
+  background-color: var(--card-bg);
   border-radius: var(--border-radius);
+  padding: 20px;
   text-align: center;
+  border: 1px solid var(--border-color);
 }
 
 .stat-number {
-  font-size: 36px;
+  font-size: 2rem;
   font-weight: 700;
   color: var(--primary-color);
-  margin: 10px 0;
+  margin-bottom: 10px;
 }
 
-/* Quiz Info Styles */
-.quiz-info {
-  background-color: rgba(74, 108, 247, 0.1);
-  padding: 20px;
-  border-radius: var(--border-radius);
-  margin-bottom: 30px;
-}
-
-.list-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+.stat-label {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 /* Footer Styles */
 footer {
   text-align: center;
   padding: 20px 0;
-  color: var(--secondary-color);
-  margin-top: 30px;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-top: 40px;
+  border-top: 1px solid var(--border-color);
 }
 
-/* Responsive Styles */
+/* Responsive Design */
 @media (max-width: 768px) {
+  .container {
+    padding: 0 15px;
+  }
+  
   nav ul {
     flex-direction: column;
     align-items: center;
     gap: 10px;
   }
   
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+  
   .dashboard-stats {
     grid-template-columns: 1fr;
   }
-  
-  .list-header {
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  table {
-    display: block;
-    overflow-x: auto;
-  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--body-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
 }
 
 /* Theme Toggle Button */
