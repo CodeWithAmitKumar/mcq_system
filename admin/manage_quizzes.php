@@ -188,8 +188,40 @@ if (isset($_GET['action']) && $_GET['action'] === 'share' && isset($_GET['quiz_i
     $quiz = getQuizById($quiz_id);
     
     if ($quiz) {
-        // Generate a share link
-        $share_link = BASE_URL . 'take_shared_quiz.php?quiz=' . $quiz_id . '&token=' . md5($quiz_id . $quiz['title'] . 'secret_salt');
+        // Generate a secure random token
+        $token = bin2hex(random_bytes(16));
+        
+        $conn = getDbConnection();
+        
+        // Check if quiz_share_tokens table exists
+        $tableExists = false;
+        $result = $conn->query("SHOW TABLES LIKE 'quiz_share_tokens'");
+        if ($result->num_rows > 0) {
+            $tableExists = true;
+        }
+        
+        // Store the token with the quiz_id
+        if ($tableExists) {
+            // Store the token in the database with an expiration time
+            $expiry = date('Y-m-d H:i:s', strtotime('+30 days'));
+            $stmt = $conn->prepare("INSERT INTO quiz_share_tokens (quiz_id, token, created_at, expires_at) VALUES (?, ?, NOW(), ?)");
+            $stmt->bind_param("iss", $quiz_id, $token, $expiry);
+            
+            if ($stmt->execute()) {
+                // Generate a share link
+                $share_link = BASE_URL . 'take_shared_quiz.php?quiz=' . $quiz_id . '&token=' . $token;
+            } else {
+                // Fallback to simple token if the table doesn't exist
+                $share_link = BASE_URL . 'take_shared_quiz.php?quiz=' . $quiz_id . '&token=' . md5($quiz_id . $quiz['title'] . 'secret_salt');
+            }
+        } else {
+            // Fallback to simple token if the table doesn't exist
+            $share_link = BASE_URL . 'take_shared_quiz.php?quiz=' . $quiz_id . '&token=' . md5($quiz_id . $quiz['title'] . 'secret_salt');
+        }
+        
+        closeDbConnection($conn);
+    } else {
+        $error = "Quiz not found.";
     }
 }
 
@@ -996,6 +1028,112 @@ $quizzes = getQuizzes();
             closeShareModal();
         }
     }
-</script>
+
+    // Share Modal Functions
+    function showShareModal(event, quizId, baseUrl, quizTitle) {
+        event.preventDefault();
+        
+        // Show loading state
+        const shareModal = document.getElementById('shareModal');
+        const shareLinkInput = document.getElementById('shareLink');
+        const copySuccessMsg = document.getElementById('copySuccess');
+        
+        // Hide any previous success message
+        copySuccessMsg.style.display = 'none';
+        
+        // Show modal
+        shareModal.style.display = 'flex';
+        setTimeout(() => shareModal.classList.add('show'), 10);
+        
+        // Set loading state
+        shareLinkInput.value = 'Generating share link...';
+        
+        // Make AJAX request to generate share link
+        fetch(`manage_quizzes.php?action=share&quiz_id=${quizId}`)
+            .then(response => response.text())
+            .then(html => {
+                // Extract the share link from the response using regex
+                const shareLink = extractShareLinkFromHtml(html);
+                
+                if (shareLink) {
+                    shareLinkInput.value = shareLink;
+                } else {
+                    shareLinkInput.value = 'Error generating link. Please try again.';
+                }
+            })
+            .catch(error => {
+                console.error('Error generating share link:', error);
+                shareLinkInput.value = 'Error generating link. Please try again.';
+            });
+    }
+    
+    function extractShareLinkFromHtml(html) {
+        // Create a DOM parser
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        // Try to find the shareLink input
+        const shareLinkInput = doc.getElementById('shareLink');
+        if (shareLinkInput && shareLinkInput.value) {
+            return shareLinkInput.value;
+        }
+        
+        // If not found, try regex as a fallback
+        const regex = new RegExp('take_shared_quiz\\.php\\?quiz=[0-9]+&token=[a-zA-Z0-9]+');
+        const match = html.match(regex);
+        if (match) {
+            // Add the base URL to the matched path
+            // Extract base URL from current location
+            const baseUrl = window.location.protocol + '//' + window.location.host + '/';
+            return baseUrl + match[0];
+        }
+        
+        return null;
+    }
+
+    function closeShareModal() {
+        const modal = document.getElementById('shareModal');
+        modal.classList.remove('show');
+        setTimeout(() => modal.style.display = 'none', 300);
+    }
+
+    function copyShareLink() {
+        const shareLinkInput = document.getElementById('shareLink');
+        const copySuccessMsg = document.getElementById('copySuccess');
+        
+        shareLinkInput.select();
+        document.execCommand('copy');
+        
+        // Show success message
+        copySuccessMsg.style.display = 'block';
+        
+        // Hide after 3 seconds
+        setTimeout(() => {
+            copySuccessMsg.style.display = 'none';
+        }, 3000);
+    }
+
+    function shareViaEmail() {
+        const shareLink = document.getElementById('shareLink').value;
+        const subject = 'Invitation to take a quiz';
+        const body = `Hello,\n\nI'm inviting you to take this quiz: ${shareLink}\n\nRegards.`;
+        
+        window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    }
+
+    function shareViaWhatsApp() {
+        const shareLink = document.getElementById('shareLink').value;
+        const text = `I'm inviting you to take this quiz: ${shareLink}`;
+        
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    }
+
+    function shareViaTelegram() {
+        const shareLink = document.getElementById('shareLink').value;
+        const text = `I'm inviting you to take this quiz: ${shareLink}`;
+        
+        window.open(`https://t.me/share/url?url=${encodeURIComponent(shareLink)}&text=${encodeURIComponent(text)}`, '_blank');
+    }
+    </script>
 </body>
 </html>

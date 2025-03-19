@@ -11,9 +11,37 @@ $quiz = getQuizById($quiz_id);
 $valid_token = false;
 
 if ($quiz) {
-    // Generate the expected token for validation
-    $expected_token = md5($quiz_id . $quiz['title'] . 'secret_salt');
-    $valid_token = ($token === $expected_token);
+    // Check if the status column exists in the quiz
+    $status_exists = isset($quiz['status']);
+    
+    // Only check status if the column exists
+    if (!$status_exists || ($status_exists && $quiz['status'] === 'published')) {
+        // First check if quiz_share_tokens table exists
+        $conn = getDbConnection();
+        $tableExists = false;
+        $result = $conn->query("SHOW TABLES LIKE 'quiz_share_tokens'");
+        if ($result->num_rows > 0) {
+            $tableExists = true;
+        }
+        
+        if ($tableExists) {
+            // Try to validate using the tokens table
+            $stmt = $conn->prepare("SELECT * FROM quiz_share_tokens WHERE quiz_id = ? AND token = ? AND expires_at > NOW()");
+            $stmt->bind_param("is", $quiz_id, $token);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            if ($result->num_rows > 0) {
+                $valid_token = true;
+            }
+        } else {
+            // Fallback to the old validation method
+            $expected_token = md5($quiz_id . $quiz['title'] . 'secret_salt');
+            $valid_token = ($token === $expected_token);
+        }
+        
+        closeDbConnection($conn);
+    }
 }
 
 // If quiz doesn't exist or token is invalid, redirect to home
